@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load cart_extras %}
+{% load stock_helpers %}
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="{% static 'css/cart/cart-summary.css' %}">
+<link rel="stylesheet" href="{% static 'css/messages.css' %}">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
+
+<ul class="messages">
+    {% for message in messages %}
+        <li class="{% if message.tags %}{{ message.tags }}{% endif %}">
+            {{ message }}
+            <button class="close-button">×</button>
+        </li>
+    {% endfor %}
+</ul>
+
+{{ cart_products }} 
+{% if cart_products %}
+    <div class="cart-summary-container">
+        <div class="cart-products-container">
+            <div class="edit-button-container">
+                <button id="toggle-edit" class="btn btn-edit" data-url="{% url 'cart_update' %}">Edit</button>
+                <button class="btn btn-danger delete-btn" type="button" data-url="{% url 'cart_delete' %}" style="display: none;">
+                    Delete <i class="bi bi-trash"></i>
+                </button>
+            </div>
+
+            <table class="cart-products-table">
+                <thead>
+                    <tr>
+                        <th class="header-select">
+                            <select id="select-toggle" class="form-select" onchange="toggleSelectAll(this.value)">
+                                <option value="">Select Option</option>
+                                <option value="select">Select All</option>
+                                <option value="deselect">Deselect All</option>
+                            </select>
+                        </th>                       
+                        <th class="header-product">Product</th>
+                        <th class="header-price">Price</th>
+                        <th class="header-quantity">Quantity</th>
+                        <th class="header-size">Size</th>
+                        <th class="header-action">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for key, value in cart_products.items %}
+                        <tr class="cart-product-item">
+                    
+                            <td class="checkbox-container">
+                                <input type="checkbox" class="product-checkbox" data-product-id="{{ key }}">
+                            </td>
+                            <td>
+                                {% with value|get_stock_image as stock_image %}
+                                    {% if stock_image %}
+                                        <img src="{{ stock_image }}" alt="{{ value.attributes.color }}" style="width: 100px; height: auto; margin-right: 10px;">
+                                    {% else %}
+                                        <span>No image available</span>
+                                    {% endif %}
+                                {% endwith %}                      
+                            </td>
+                            <td>
+                                <p class="product-price">{{ value.price|format_price }} VND</p>
+                            </td>
+                            <td>
+                                <div class="quantity-wrapper">
+                                    <button class="btn decrease-qty" type="button" data-product-id="{{ key }}" disabled>-</button>
+                                    <input type="number" class="quantity-input" id="quantity-input-{{ key }}" value="{{ value.quantity }}" data-product-id="{{ key }}" disabled>
+                                    <button class="btn increase-qty" type="button" data-product-id="{{ key }}" disabled>+</button>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="product-size">{{ value.attributes.size }}</p>
+                            </td>
+                            <td>
+                                <p class="product-total-price">{{ value.quantity|multiply:value.price|format_price }} VND</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="billing-info">
+            <table class="billing-table">
+                <tr>
+                    <th colspan="2">Billing Info</th>
+                </tr>
+                <tr>
+                    <td>Subtotal:</td>
+                    <td>{{ cart_total_price|format_price }} VND</td>
+                </tr>
+                <tr>
+                    <td>Shipping:</td>
+                    <td>{{ shipping_cost }} VND</td>
+                </tr>
+                <tr>
+                    <td><strong>Total:</strong></td>
+                    <td><strong>{{ cart_total_price|format_price }} VND</strong></td>
+                </tr>
+            </table>
+            <form action="{% url 'checkout' %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-proceed">Proceed to Checkout</button>
+            </form>
+        </div>
+    </div>
+{% else %}
+    <h3>Wow, such empty</h3>
+{% endif %}
+
+
+{% include 'warning-modal.html' %} 
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="{% static 'js/cart/cart_edit_mode.js' %}"></script>
+<script src="{% static 'js/cart/cart_delete.js' %}"></script>
+<script src="{% static 'js/components/quantities.js' %}"></script>
+<script src="{% static 'js/messages.js' %}"></script>
+{% endblock %}

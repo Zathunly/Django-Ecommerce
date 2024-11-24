@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load cart_extras %}
+
+<main>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/products.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/css/ion.rangeSlider.min.css" rel="stylesheet">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <!-- Message Form -->
+    <ul class="list-unstyled mb-4">
+        {% for message in messages %}
+            <li class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Sidebar and Main Content Container -->
+    <div class="container mt-5">
+        <div class="row">
+            <aside class="col-md-3">
+                <!-- Filter Form -->
+                <div class="filter-section mb-4">
+                    <h5 class="font-weight-bold">Filter by Category</h5>
+                    <div class="list-group">
+                        <a href="?category=" class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                            <span class="radio-style"></span> All Categories
+                        </a>
+                        {% for category in categories %}
+                            <a href="?category={{ category.id }}" 
+                            class="list-group-item list-group-item-action {% if category.id|stringformat:"s" == selected_category %}active{% endif %}">
+                                <span class="radio-style"></span> {{ category.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Filter by Subcategory -->
+                <div class="filter-section mb-4" id="subcategory-container" style="display: {% if selected_category %}block{% else %}none{% endif %};">
+                    <h5 class="font-weight-bold">Filter by Sub-Category</h5>
+                    <div class="list-group">
+                        <a href="?category={{ selected_category }}&subcategory=" class="list-group-item list-group-item-action {% if not selected_subcategory %}active{% endif %}">
+                            <span class="radio-style"></span> All Sub-categories
+                        </a>
+                        {% for subcategory in subcategories %}
+                            <a href="?category={{ selected_category }}&subcategory={{ subcategory.id }}" 
+                            class="list-group-item list-group-item-action {% if subcategory.id|stringformat:"s" == selected_subcategory %}active{% endif %}">
+                                <span class="radio-style"></span> {{ subcategory.name_with_prefix|default:subcategory.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Filter by Price -->
+                <div class="filter-section mb-4">
+                    <h5 class="font-weight-bold">Filter by Price Range</h5>
+                    <div class="list-group">
+                        <a href="?category={{ selected_category }}&subcategory={{ selected_subcategory }}&price_range=" 
+                        class="list-group-item list-group-item-action {% if not price_range %}active{% endif %}">
+                            <span class="radio-style"></span> All Prices
+                        </a>
+                        <a href="?category={{ selected_category }}&subcategory={{ selected_subcategory }}&price_range=0-100000" 
+                        class="list-group-item list-group-item-action {% if price_range == "0-100000" %}active{% endif %}">
+                        <span class="radio-style"></span> 0 - 100.000 VND
+                        </a>
+                        <a href="?category={{ selected_category }}&subcategory={{ selected_subcategory }}&price_range=100000-500000" 
+                        class="list-group-item list-group-item-action {% if price_range == "100000-500000" %}active{% endif %}">
+                        <span class="radio-style"></span> 100.000 - 500.000 VND
+                        </a>
+                        <a href="?category={{ selected_category }}&subcategory={{ selected_subcategory }}&price_range=500000-1000000" 
+                        class="list-group-item list-group-item-action {% if price_range == "500000-1000000" %}active{% endif %}">
+                        <span class="radio-style"></span> 500,000 - 1.000.000 VND
+                        </a>
+                        <a href="?category={{ selected_category }}&subcategory={{ selected_subcategory }}&price_range=100000-1500000" 
+                        class="list-group-item list-group-item-action {% if price_range == "100000-1500000" %}active{% endif %}">
+                        <span class="radio-style"></span> 1.000.000 - 1.500.000 VND
+                        </a>
+                        <!-- Add more price range options as needed -->
+                    </div>
+                </div>
+
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="col-md-9">
+                <!-- Search Query -->
+                <form method="GET" action="{% url 'search_products' %}" class="form-inline mb-4">
+                    <input type="text" name="q" placeholder="Search for products..." class="form-control mr-2">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+
+                <!-- Products Grid -->
+                <section>
+                    <div class="row">
+                        {% for product in products %}
+                        <div class="col-md-3 col-sm-6 mb-4">
+                            <h3><a href="{% url 'product-details-view' product.id %}" class="text-decoration-none text-dark"></h3>
+                            <div class="card h-100 product-card">
+                                <div class="product-image-wrapper position-relative">
+                                    {% if product.image %}
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top">
+                                    {% endif %}
+                                    {% if product.is_sale %}
+                                        <span class="badge badge-danger position-absolute sale-badge">SALE</span>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body text-center">
+                                    <h5 class="product-name">{{ product.name }}</h5>
+                                    <p class="product-price">
+                                        {% if product.is_sale %}
+                                            {{ product.sale_price|format_price }} VND
+                                        {% else %}
+                                            {{ product.price|format_price }} VND
+                                        {% endif %}
+                                    </p>
+                                    <input type="hidden" id="quantity-input" value="1">
+                                    {% comment %} <button type="button" value="{{ product.id }}" class="btn btn-primary add-cart-btn" id="add-to-cart" data-url="{% url 'cart_add' %}">
+                                        Add to Cart
+                                    </button> {% endcomment %}
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        {% empty %}
+                            <p class="col-12">No products available.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Pagination Controls -->
+                <div class="pagination mt-4">
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            {% if products.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_subcategory %}&subcategory={{ selected_subcategory }}{% endif %}">Previous</a>
+                                </li>
+                            {% endif %}
+                            {% for num in products.paginator.page_range %}
+                                <li class="page-item {% if products.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_subcategory %}&subcategory={{ selected_subcategory }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endfor %}
+                            {% if products.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ products.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_subcategory %}&subcategory={{ selected_subcategory }}{% endif %}">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/js/ion.rangeSlider.min.js"></script>
+<script src="{% static 'js/products/products.js' %}"></script>
+<script src="{% static 'js/products/add_to_cart.js' %}"></script>
+<script src="{% static 'js/messages.js' %}"></script>
+{% endblock %}

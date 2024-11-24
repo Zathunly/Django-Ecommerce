@@ -1,0 +1,5 @@
+/* Target the modal header with .bg-warning specifically within #warningModal */
+#warningModal .modal-header.bg-warning {
+    background-color: #000000 !important; 
+    color: white !important; 
+}

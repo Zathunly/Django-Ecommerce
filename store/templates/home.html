@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Home - My Website
+{% endblock %}
+
+{% block content %}
+    {% load static %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+    <script src="{% static 'js/messages.js' %}"></script> 
+    {% if messages %}
+        {% load static %}
+        <ul class="messages" style="animation: fadeOut 4s;">
+            {% for message in messages %}
+                <li class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                    <button class="close-button" onclick="this.parentElement.style.display='none';">×</button>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <section class="welcome-section">
+        <h1>Welcome to My Website</h1>
+    </section>
+{% endblock %}
+

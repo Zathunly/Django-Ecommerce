@@ -1,0 +1,25 @@
+.checkout-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+.order-summary {
+    border-left: 1px solid #ddd;
+    padding: 20px;
+}
+
+.payment-buttons img {
+    width: 100px;
+    margin: 5px;
+}
+
+.shipping-address-list .dl, ol, ul{
+    margin-left: -30px;
+}
+
+#cart-product-img{
+    width: 100px; 
+    height: auto;
+    margin-right: 15px;
+}

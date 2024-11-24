@@ -1,0 +1,258 @@
+.container{
+    max-width: 80%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Make the main content area take remaining space */
+main {
+    flex: 1;
+    padding-bottom: 3rem; /* Extra space to ensure pagination doesn't overlap footer */
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd; /* Add border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.sidebar .form-group {
+    margin-bottom: 20px;
+}
+
+/* Message Alerts */
+.list-unstyled li {
+    position: relative;
+    padding-right: 2rem;
+}
+
+.close-button {
+    position: absolute;
+    top: 10%;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* Product Grid */
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: flex-start;
+}
+
+/* Product Card */
+.product-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #ddd; /* Add border */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.product-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 5px 5px 0 0;
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.product-image-wrapper:hover .product-image {
+    transform: scale(1.05);
+}
+
+/* Sale Badge */
+.sale-badge {
+    top: 10px;
+    left: 10px;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    color: #fff;
+    background-color: #dc3545;
+    border-radius: 3px;
+}
+
+/* Product Info */
+.product-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.product-name {
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a.text-dark{
+    font-weight: bold;
+}
+
+.product-price {
+    color: #333;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 8px;
+}
+
+.product-price .original-price {
+    text-decoration: line-through;
+    color: #777;
+    margin-left: 5px;
+}
+
+/* Add to Cart Button */
+.btn-primary{
+    font-weight: bold;
+}
+
+.add-cart-btn {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.add-cart-btn:hover {
+    background-color: #919191;
+}
+
+.btn-primary{
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Basic pagination styling */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem; /* Ensure space between pagination and footer */
+    padding: 0.5rem; /* Padding to prevent overlap */
+    position: relative;
+    z-index: 0;
+}
+
+/* Pagination link styling */
+.page-item .page-link {
+    color: #000000 ;
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    transition: background-color 0.3s;
+    position: relative; /* Keep it in normal flow */
+    z-index: 0;
+    border-radius: 100%;
+}
+
+/* Active page styling */
+.page-item.active .page-link {
+    z-index: 3;
+    border-radius: 100%;
+    color: #ffffff; /* Set to desired color for active state text */
+    background-color: #000000;
+    border-color: #000000; /* Optional: Set border color if needed */
+}
+
+/* Hover effect */
+.page-item .page-link:hover {
+    color: #ffffff;
+    background-color: #000000;
+}
+
+form{
+    border: 1px solid rgba(0,0,0,.125),
+}
+
+#filter-form{
+    font-weight: 600;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+label{
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Style for the radio-style indicator */
+.filter-section {
+    border: 1px solid #000000; /* Corrected from 1xp to 1px */
+    padding: 10px; /* Optional padding for better spacing */
+    border-radius: 4px; /* Optional rounded corners */
+}
+.radio-style {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 8px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+}
+
+.list-group-item.active .radio-style {
+    background-color: #000000; /* Red color for selected radio */
+}
+
+/* Styling for active (selected) list group items */
+.list-group-item.active {
+    font-weight: bold;
+    color: #000000; /* Red color for selected text */
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.list-group-item {
+    color: #333;
+    text-decoration: none;
+    border: None
+}
+
+.list-group-item:hover {
+    color: #777;
+    text-decoration: none;
+}
+
+.list-group-item .radio-style:before {
+    content: "";
+    display: block;
+    width: 0.6em;
+    height: 0.6em;
+    margin: auto;
+    background-color: #000000;
+    border-radius: 50%;
+    visibility: hidden;
+}
+
+.list-group-item.active .radio-style:before {
+    visibility: visible;
+}

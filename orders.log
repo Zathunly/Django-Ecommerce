@@ -1,0 +1,54 @@
+Watching for file changes with StatReloader
+"GET /admin/ HTTP/1.1" 200 34184
+/usr/src/app/payment/admin.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /admin/store/subcategory/ HTTP/1.1" 200 63598
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /admin/store/stock/ HTTP/1.1" 200 73089
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /admin/store/color/ HTTP/1.1" 200 52098
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /admin/payment/paymentmethod/ HTTP/1.1" 200 43968
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /admin/payment/shippingaddress/ HTTP/1.1" 200 48947
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /admin/payment/order/ HTTP/1.1" 200 79364
+"GET /static/js/admin/format_order_amount_paid.js HTTP/1.1" 304 0
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /admin/payment/order/3/change/ HTTP/1.1" 200 74049
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"POST /admin/payment/order/3/change/ HTTP/1.1" 302 0
+"GET /admin/payment/order/ HTTP/1.1" 200 79762
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"POST /admin/payment/order/ HTTP/1.1" 302 0
+"GET /admin/payment/order/ HTTP/1.1" 200 79725
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+/usr/src/app/payment/admin.py changed, reloading.
+Watching for file changes with StatReloader
+"GET /admin/payment/order/5/change/ HTTP/1.1" 200 74043
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"POST /admin/payment/order/5/change/ HTTP/1.1" 302 0
+"GET /admin/payment/order/ HTTP/1.1" 200 79786
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /admin/payment/order/6/change/ HTTP/1.1" 200 74051
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"POST /admin/payment/order/6/change/ HTTP/1.1" 302 0
+"GET /admin/payment/order/ HTTP/1.1" 200 79785
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"POST /admin/payment/order/ HTTP/1.1" 302 0
+"GET /admin/payment/order/ HTTP/1.1" 200 79725
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+/usr/src/app/payment/admin.py changed, reloading.
+Watching for file changes with StatReloader
+"POST /admin/payment/order/ HTTP/1.1" 302 0
+"GET /admin/payment/order/ HTTP/1.1" 200 79725
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"GET /admin/payment/order/6/change/ HTTP/1.1" 200 74051
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"POST /admin/payment/order/6/change/ HTTP/1.1" 302 0
+"GET /admin/payment/order/ HTTP/1.1" 200 79786
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+"POST /admin/payment/order/ HTTP/1.1" 302 0
+"GET /admin/payment/order/ HTTP/1.1" 200 79725
+"GET /admin/jsi18n/ HTTP/1.1" 200 3342
+/usr/src/app/ecom/settings.py changed, reloading.
