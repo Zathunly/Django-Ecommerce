@@ -4,13 +4,17 @@ from django.contrib import messages
 from django.http import JsonResponse
 from .forms import RegisterForm
 from django.contrib.auth import authenticate, login, logout 
-from .models import Product,SubCategory, Category, Size, Color
+from .models import Product,SubCategory, Category, Size, Color, Sale, SaleCollection
 from payment.models import Order
 from .serializers import ProductSerializer
 from .forms import LoginForm
 from .products import filter_products, paginate_products
-from django.core.files.storage import default_storage
+from django.urls import reverse
 from django.db.models import Sum
+from pageview.models import HomeBanner
+from django.views.decorators.http import require_POST
+from django.db import transaction
+
 
 
 def register_view(request):
@@ -63,21 +67,26 @@ def logout_view(request):
 #         customize_theme = None  
 #     return render(request, 'base.html', {'customize_theme': customize_theme})
 
-
 def home_view(request):
-    return render(request, 'home.html', {'user': request.user})
+    banners = HomeBanner.objects.filter(is_active=True).order_by('display_order')
+    return render(request, 'home.html', {'banners': banners})
 
 def products_view(request):
     selected_category = request.GET.get('category', '')
     selected_subcategory = request.GET.get('subcategory', '')
-    price_range = request.GET.get('price_range', '') 
+    price_range = request.GET.get('price_range', '')
+    query = request.GET.get('q', '')  # Get the search query
     page_number = request.GET.get('page', 1)
 
+    # Filter products based on all parameters
     products, subcategories = filter_products(
         selected_category=selected_category,
         selected_subcategory=selected_subcategory,
         price_range=price_range
     )
+
+    if query:  # Apply search query if present
+        products = products.filter(name__icontains=query)
 
     paginated_products = paginate_products(products, page_number)
     categories = Category.objects.all()
@@ -88,17 +97,8 @@ def products_view(request):
         'subcategories': subcategories,
         'selected_category': selected_category,
         'selected_subcategory': selected_subcategory,
-        'price_range': price_range,  
-    }
-    return render(request, 'products.html', context)
-
-def search_products(request):
-    query = request.GET.get('q') 
-    products = Product.objects.filter(name__icontains=query) if query else None 
-
-    context = {
-        'products': products,
-        'query': query,
+        'price_range': price_range,
+        'query': query,  # Pass the search query to the template
     }
     return render(request, 'products.html', context)
 
@@ -134,7 +134,6 @@ def get_subcategories(request):
     return JsonResponse({'subcategories': list(subcategories)})
 
 
-
 # Dashboard
 def calculate_revenue():
     total_revenue = Order.objects.aggregate(total_revenue=Sum('amount_paid'))['total_revenue']
@@ -154,6 +153,66 @@ def dashboard_callback(request, context):
         "total_revenue": total_revenue,
     })
     return context
+
+@require_POST
+@transaction.atomic
+def apply_sale_collection(request):
+    sale_id = request.POST.get("sale")  # Sale ID
+    collection_id = request.POST.get("collection")  # Sale Collection ID
+    product_ids = request.POST.getlist("product_ids[]")  # Selected Product IDs
+
+    try:
+        # Fetch the selected products
+        products = Product.objects.filter(id__in=product_ids)
+        if not products.exists():
+            return JsonResponse({"error": "No valid products were selected."}, status=400)
+
+        # Reset sale-related fields for all selected products
+        for product in products:
+            product.sale_price = product.price
+            product.sale_percentage = 0
+            product.is_sale = False
+            product.save()
+
+        if collection_id:
+            # Fetch SaleCollection and add products
+            collection = get_object_or_404(SaleCollection, id=collection_id, is_active=True)
+            collection.products.add(*products)
+            collection.save()
+
+            # Apply all Sales associated with the SaleCollection
+            for sale in collection.sales.all():
+                discount = sale.percent / 100
+                for product in products:
+                    product.sale_price = round(product.price * (1 - discount), 2)
+                    product.sale_percentage = sale.percent
+                    product.is_sale = True
+                    product.save()
+
+                # Add products to the Sale
+                sale.products.add(*products)
+
+        if sale_id:
+            # Fetch Sale and apply directly
+            sale = get_object_or_404(Sale, id=sale_id)
+            for product in products:
+                discount = sale.percent / 100
+                product.sale_price = round(product.price * (1 - discount), 2)
+                product.sale_percentage = sale.percent
+                product.is_sale = True
+                product.save()
+
+            # Add products to the Sale
+            sale.products.add(*products)
+
+        # Redirect back to the admin changelist
+        return redirect(reverse("admin:store_product_changelist"))
+
+    except Exception:
+        return redirect(reverse("admin:store_product_changelist"))
+
+def permission_callback(request):
+    return request.user.has_perm("store.change_model")
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()

@@ -40,7 +40,7 @@ function deleteCartItems(url, productKeys, csrfToken) {
         type: 'POST',
         url: url,
         data: {
-            product_keys: JSON.stringify(productKeys),  // Send unique keys to the backend
+            product_keys: JSON.stringify(productKeys),  
             csrfmiddlewaretoken: csrfToken,
             action: 'delete',
         },

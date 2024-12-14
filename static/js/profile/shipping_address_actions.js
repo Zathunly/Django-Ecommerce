@@ -15,6 +15,7 @@ async function deleteAddress(addressId) {
         if (response.ok) {
             document.getElementById(`address-string-${addressId}`).remove();
             alert("Address deleted successfully.");
+            location.reload()
         } else {
             alert("Failed to delete the address. Please try again.");
         }
@@ -38,7 +39,6 @@ function toggleEditForm(addressId) {
     }
 }
 
-// Function to toggle the display of the add new address form
 function toggleAddForm() {
     const addForm = document.getElementById("add-address-form");
     addForm.style.display = addForm.style.display === "none" ? "block" : "none";

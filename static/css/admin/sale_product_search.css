@@ -1,0 +1,16 @@
+/* Increase the height of the autocomplete dropdown */
+.select2-container {
+    min-height: 200px;
+}
+
+/* Adjust input size */
+.select2-search__field {
+    height: 40px;
+}
+
+/* Highlight selected items in the dropdown */
+.select2-results__option[aria-selected="true"] {
+    background-color: #dff0d8; 
+    font-weight: bold;        
+    color: #3c763d;         
+}

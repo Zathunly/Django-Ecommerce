@@ -1,5 +1,6 @@
 {% load static %}
 {% load cart_extras %}
+{% load stock_helpers %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,6 +31,7 @@
                                 name="shipping_address" 
                                 id="shipping_address_{{ shipping_address.id }}" 
                                 value="{{ shipping_address.id }}" 
+                                {% if shipping_address.is_default %}checked{% endif %}  
                                 required>
                             <label class="form-check-label" for="shipping_address_{{ shipping_address.id }}">
                                 {{ shipping_address.full_name }} - {{ shipping_address.address1 }}
@@ -39,6 +41,7 @@
                         </div>
                     {% endfor %}
                 </div>
+                
 
                 <h4>Payment Method</h4>
                 <div class="payment-methods mb-3">
@@ -64,26 +67,30 @@
             <div class="container mt-4">
                 <div class="d-flex">
                     <div>
-                        {% for key, cart_product in cart_products.items %}
-                            <div class="border p-3 mb-3 rounded d-flex align-items-start">
-                                {% if cart_product.image %}
-                                    <img id="cart-product-img" src="{{ cart_product.image.url }}" class="img-fluid" style="width: 80px; height: auto; margin-right: 15px;">
-                                {% endif %}
-                                <div>
-                                    <h5 class="mb-1 product-name">{{ cart_product.name }}</h5>
-                        
-                                    <!-- Display product attributes from the key -->
-                                    <p class="mb-0 product-size"><strong>Size:</strong> {{ cart_product.attributes.size }}</p>
-                        
-                                    <!-- Display quantity, price, and total based on the session data -->
-                                    <p class="mb-0 product-quantity"><strong>Qty:</strong> {{ cart_product.quantity }}</p>
-                                    <p class="mb-0 product-price"><strong>Price:</strong> {{ cart_product.price|format_price }}</p>
-                                    <p class="mt-2 product-total-price text-danger font-weight-bold">
-                                        Total: {{ cart_product.quantity|multiply:cart_product.price|format_price }} VND
-                                    </p>
+                            {% for key, cart_product in cart_products.items %}
+                                <div class="border p-3 mb-3 rounded d-flex align-items-start">
+                                    {% with cart_product|get_stock_image as stock_image %}
+                                        {% if stock_image %}
+                                            <img id="cart-product-img" src="{{ stock_image }}" class="img-fluid" style="width: 120px; height: auto; margin-right: 15px;">
+                                        {% else %}
+                                            <img id="cart-product-img" src="/static/images/default-product.png" class="img-fluid" style="width: 120px; height: auto; margin-right: 15px;">
+                                        {% endif %}
+                                    {% endwith %}
+                                    <div>
+                                        <h5 class="mb-1 product-name">{{ cart_product.name }}</h5>
+                            
+                                        <!-- Display product attributes from the key -->
+                                        <p class="mb-0 product-size"><strong>Size:</strong> {{ cart_product.attributes.size }}</p>
+                            
+                                        <!-- Display quantity, price, and total based on the session data -->
+                                        <p class="mb-0 product-quantity"><strong>Qty:</strong> {{ cart_product.quantity }}</p>
+                                        <p class="mb-0 product-price"><strong>Price:</strong> {{ cart_product.price|format_price }}</p>
+                                        <p class="mt-2 product-total-price text-danger font-weight-bold">
+                                            Total: {{ cart_product.quantity|multiply:cart_product.price|format_price }} VND
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
                     </div>
                 </div>
             </div>

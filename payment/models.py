@@ -13,13 +13,29 @@ class ShippingAddress(models.Model):
     address2 = models.CharField(max_length=255, null=True, blank=True) 
     city_province = models.CharField(max_length=255)
     district = models.CharField(max_length=255)
+    is_default = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Shipping Addresses'
 
+    def save(self, *args, **kwargs):
+        if self.is_default:
+            ShippingAddress.objects.filter(user=self.user, is_default=True).exclude(id=self.id).update(is_default=False)
+        super().save(*args, **kwargs)
+
+        if not self.full_name and self.user:
+            profile = getattr(self.user, 'profile', None)  # Access the Profile object via a reverse relationship
+            if profile:
+                self.full_name = f"{self.user.first_name} {self.user.last_name}".strip()
+
+        # Ensure only one address is marked as default
+        if self.is_default:
+            ShippingAddress.objects.filter(user=self.user, is_default=True).exclude(id=self.id).update(is_default=False)
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'Shipping Address - {self.full_name}, {self.city_province}'
-
 
 class PaymentMethod(models.Model):
     name = models.CharField(max_length=50, unique=True)  

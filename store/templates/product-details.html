@@ -8,89 +8,92 @@
 
 <link rel="stylesheet" href="{% static 'css/product-details.css' %}">
 
-<ul class="messages">
-    {% for message in messages %}
-        <li class="{% if message.tags %}{{ message.tags }}{% endif %}">
-            {{ message }}
-            <button class="close-button" onclick="this.parentElement.style.display='none';">×</button>
-        </li>
-    {% endfor %}
-</ul>
-
-<div class="product-detail-container">
-    <div class="product-image-wrapper">
-        <img 
-            src="{% if selected_image %}{{ selected_image }}{% else %}{{ product.image.url }}{% endif %}" 
-            alt="{{ product.name }}" 
-            class="product-image" 
-            id="product-image" 
-            style="width: 100%; max-width: 400px;"
-        >
-    </div>
-    
-    <div class="product-info">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-
-        <h1>{{ product.name }}</h1>
+<div class="container">
+    <div class="product-detail-container">
+        <div class="product-image-wrapper">
+            <img 
+                src="{% if selected_image %}{{ selected_image }}{% else %}{{ product.image.url }}{% endif %}" 
+                alt="{{ product.name }}" 
+                class="product-image" 
+                id="product-image" 
+                style="width: 100%; max-width: 400px;"
+            >
+        </div>
         
-        {% if product.is_sale %}
-            <span class="badge bg-danger sale-badge">SALE</span>
-            <p class="product-price">{{ product.sale_price|format_price }} VND</p>
-        {% else %}
-            <p class="product-price">{{ product.price|format_price }} VND</p>
-        {% endif %}
-
-        <div class="quantity-wrapper">
-            <button class="btn btn-outline-secondary decrease-qty" type="button">-</button>
-            <input type="number" class="quantity-input" id="quantity-input" value="1" min="1">
-            <button class="btn btn-outline-secondary increase-qty" type="button">+</button>
-        </div>
-
-        <div class="size-options-container">
-            <h5>Select Size</h5>
-            {% for size in sizes %}
-                <button 
-                    type="button" 
-                    class="btn btn-outline-primary size-option {% if size.name == selected_size %}active{% endif %}" 
-                    data-size="{{ size.name }}" 
-                    onclick="selectSize(this)"
-                >
-                    {{ size.name }}
-                </button>
-            {% endfor %}
-        </div>
-        <input type="hidden" id="selected-color-input" name="selected_color" value="">
-
-        <!-- Color Options -->
-        <div class="color-options-container">
-            <h5>Select Color</h5>
-            {% for color in colors %}
-                <button 
-                    type="button" 
-                    class="btn color-option {% if color.name == selected_color %}active{% endif %}" 
-                    data-color="{{ color.name }}" 
-                    data-hex="{{ color.hex_code }}" 
-                    style="background-color: {{ color.hex_code }}; width: 40px; height: 40px; border: 1px solid #000; border-radius: 5px;" 
-                    onclick="selectColor(this)"
-                >
-                </button>
-            {% endfor %}
-        </div>
-
-        <div class="button-group" style="text-align: center;">
-            <button type="button" value="{{ product.id }}" class="secondary-btn add-cart-btn" id="add-to-cart" data-url="{% url 'cart_add' %}">
-                Add to Cart
-            </button>
+        <div class="product-info">
+            <div>
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                <div class="product-name">
+                    <h1>{{ product.name }}</h1>
+                </div>
+        
+                <div class="price-badge-wrapper">
+                    <p class="product-price">
+                        {% if product.is_sale %}
+                            <span class="old-price">{{ product.price|format_price }}đ</span>
+                            <span class="sale-price">{{ product.sale_price|format_price }}đ</span>
+                        {% else %}
+                            <span class="regular-price">{{ product.price|format_price }}đ</span>
+                        {% endif %}
+                    </p>    
+                </div>                
+            </div>
+        
+            <div class="quantity-wrapper">
+                <button class="btn btn-outline-secondary decrease-qty" type="button">-</button>
+                <input type="number" class="quantity-input" id="quantity-input" value="1" min="1">
+                <button class="btn btn-outline-secondary increase-qty" type="button">+</button>
+            </div>          
+              
+            <div class="size-options-container">
+                <h5 class="option-label">Select Size:</h5>
+                <div class="size-options">
+                    {% for size in sizes %}
+                        <button 
+                            type="button" 
+                            class="btn btn-outline-primary size-option {% if size.name == selected_size %}active{% endif %}" 
+                            data-size="{{ size.name }}" 
+                            onclick="selectSize(this)"
+                        >
+                            {{ size.name }}
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
             
-            <a class="secondary-btn btn-fav">Add to Favorites</a>
-        </div>
+            <div class="color-options-container">
+                <h5 class="option-label">Select Color:</h5><br>
+                <div class="color-options">
+                    {% for color in colors %}
+                        <button 
+                            type="button" 
+                            class="btn color-option {% if color.name == selected_color %}active{% endif %}" 
+                            data-color="{{ color.name }}" 
+                            data-hex="{{ color.hex_code }}" 
+                            style="background-color: {{ color.hex_code }};" 
+                            onclick="selectColor(this)"
+                        >
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>                      
+        
+            <div class="button-group">
+                <button type="button" value="{{ product.id }}" class="secondary-btn add-cart-btn" id="add-to-cart" data-url="{% url 'cart_add' %}">
+                    Add to Cart
+                </button>
+                
+                <a class="secondary-btn btn-fav">Add to Favorites</a>
+            </div>
+        </div>        
+    </div>
+    <div class="product-details-description" >
+        {{ product.description }}
     </div>
 </div>
-
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="{% static 'js/products/details/actions.js' %}"></script>
 <script src="{% static 'js/products/details/add_to_cart.js' %}"></script>
 <script src="{% static 'js/components/quantities.js' %}"></script>
-<script src="{% static 'js/messages.js' %}"></script>
 {% endblock %}

@@ -21,7 +21,11 @@ $(document).on('click', '#add-to-cart', function(e) {
     var productQty = $('#quantity-input').val() || 1;
     var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
-    var priceText = $this.closest('.product-info').find('.product-price').text().trim();
+    // Extract price from the HTML structure
+    var $productInfo = $this.closest('.product-info');
+    var priceText = $productInfo.find('.sale-price').text().trim() || 
+                    $productInfo.find('.regular-price').text().trim(); // Check for sale price first
+
     var numericPriceText = priceText.replace(' VND', '').replace(/\./g, '').replace(',', '.').replace(/[^0-9.]/g, '');
     var productPrice = parseFloat(numericPriceText);
     

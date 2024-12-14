@@ -5,20 +5,12 @@
 
 
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
-<script src="{% static 'js/messages.js' %}"></script> 
-<ul class="messages">
-    {% for message in messages %}
-        <li class="{% if message.tags %}{{ message.tags }}{% endif %}">
-            {{ message }}
-            <button class="close-button" onclick="this.parentElement.style.display='none';">×</button>
-        </li>
-    {% endfor %}
-</ul>
 
 <body>
-    <div class="container light-style flex-grow-1 container-p-y">
+    <div class="container light-style flex-grow-1 container-p-y mt-3">
         <div class="card overflow-hidden">
             <div class="row no-gutters row-bordered row-border-light">
                 <div class="col-md-3 pt-0">
@@ -28,7 +20,7 @@
                         <a class="list-group-item list-group-item-action" data-toggle="list"
                             href="#account-change-password">Change password</a>
                         <a class="list-group-item list-group-item-action" data-toggle="list"
-                            href="#account-info">Info</a>
+                            href="#orders-manage">Order</a>
                         <a class="list-group-item list-group-item-action" data-toggle="list"
                             href="#shipping-address-manage">Shipping Address</a>
                         <a class="list-group-item list-group-item-action" data-toggle="list"
@@ -140,124 +132,240 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="account-info">
-                            <div class="card-body pb-2">
-                                <div class="form-group">
-                                    <label class="form-label">Bio</label>
-                                    <textarea class="form-control"
-                                        rows="5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nunc arcu, dignissim sit amet sollicitudin iaculis, vehicula id urna. Sed luctus urna nunc. Donec fermentum, magna sit amet rutrum pretium, turpis dolor molestie diam, ut lacinia diam risus eleifend sapien. Curabitur ac nibh nulla. Maecenas nec augue placerat, viverra tellus non, pulvinar risus.</textarea>
+
+                        <div class="tab-pane fade" id="orders-manage">
+                            <div class="container mt-3">
+                                <!-- Bootstrap Nav Tabs -->
+                                <ul class="nav nav-tabs" id="ordersTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="pending-tab" data-toggle="tab" href="#pending" role="tab" aria-controls="pending" aria-selected="true">Pending Orders</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="completed-tab" data-toggle="tab" href="#completed" role="tab" aria-controls="completed" aria-selected="false">Completed Orders</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="cancelled-tab" data-toggle="tab" href="#cancelled" role="tab" aria-controls="cancelled" aria-selected="false">Cancelled Orders</a>
+                                    </li>
+                                </ul>
+                            
+                                <!-- Tab Content -->
+                                <div class="tab-content" id="ordersTabContent">
+                                    <!-- Pending Orders -->
+                                    <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                                        <h5 class="mt-3" style="color: #FFA500;">Pending Orders</h5>
+                                        <table class="table">
+                                            <thead class="bg-warning text-dark">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Full Name</th>
+                                                    <th>Email</th>
+                                                    <th>Shipping Address</th>
+                                                    <th>Amount Paid</th>
+                                                    <th>Date Ordered</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for order in pending_orders %}
+                                                <tr>
+                                                    <td>{{ order.id }}</td>
+                                                    <td>{{ order.full_name }}</td>
+                                                    <td>{{ order.email }}</td>
+                                                    <td>{{ order.shipping_address }}</td>
+                                                    <td>{{ order.amount_paid }}</td>
+                                                    <td>{{ order.date_ordered }}</td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="6">No pending orders.</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            
+                                    <!-- Completed Orders -->
+                                    <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+                                        <h5 class="mt-3 text-success">Completed Orders</h5>
+                                        <table class="table">
+                                            <thead class="bg-success text-white">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Full Name</th>
+                                                    <th>Email</th>
+                                                    <th>Shipping Address</th>
+                                                    <th>Amount Paid</th>
+                                                    <th>Date Ordered</th>
+                                                    <th>Order Complete Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for order in completed_orders %}
+                                                <tr>
+                                                    <td>{{ order.id }}</td>
+                                                    <td>{{ order.full_name }}</td>
+                                                    <td>{{ order.email }}</td>
+                                                    <td>{{ order.shipping_address }}</td>
+                                                    <td>{{ order.amount_paid }}</td>
+                                                    <td>{{ order.date_ordered }}</td>
+                                                    <td>{{ order.order_complete_date }}</td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="7">No completed orders.</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            
+                                    <!-- Cancelled Orders -->
+                                    <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
+                                        <h5 class="mt-3 text-danger">Cancelled Orders</h5>
+                                        <table class="table">
+                                            <thead class="bg-danger text-white">
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Full Name</th>
+                                                    <th>Email</th>
+                                                    <th>Shipping Address</th>
+                                                    <th>Amount Paid</th>
+                                                    <th>Date Ordered</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for order in cancelled_orders %}
+                                                <tr>
+                                                    <td>{{ order.id }}</td>
+                                                    <td>{{ order.full_name }}</td>
+                                                    <td>{{ order.email }}</td>
+                                                    <td>{{ order.shipping_address }}</td>
+                                                    <td>{{ order.amount_paid }}</td>
+                                                    <td>{{ order.date_ordered }}</td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="6">No cancelled orders.</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="form-label">Birthday</label>
-                                    <input type="text" class="form-control" value="May 3, 1995">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Country</label>
-                                    <select class="custom-select">
-                                        <option>USA</option>
-                                        <option selected>Canada</option>
-                                        <option>UK</option>
-                                        <option>Germany</option>
-                                        <option>France</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <hr class="border-light m-0">
-                            <div class="card-body pb-2">
-                                <h6 class="mb-4">Contacts</h6>
-                                <div class="form-group">
-                                    <label class="form-label">Phone</label>
-                                    <input type="text" class="form-control" value="+0 (123) 456 7891">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Website</label>
-                                    <input type="text" class="form-control" value>
-                                </div>
-                            </div>
-                        </div>
+                            </div>                            
+                        </div>                        
+
                         <div class="tab-pane fade" id="shipping-address-manage">
                             <div class="card-body pb-2">
                                 <h4>Your Shipping Addresses</h4>
-                                
+                            
                                 <div id="address-list">
                                     {% for address in shipping_addresses %}
                                         <div class="address-info" id="address-{{ address.id }}">
                                             <p id="address-string-{{ address.id }}">
-                                                {{ address.full_name }} - {{ address.address1 }}, {{ address.district }}, {{ address.city_province }}
-                                                <button class="btn btn-link" type="button" onclick="toggleEditForm({{ address.id }})">Edit</button>
-                                                <button class="btn btn-link text-danger delete-btn" type="button" onclick="deleteAddress({{ address.id }})">
-                                                    Delete
-                                                </button>                                            
-                                            </p>
+                                                {% if address.is_default %}
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <p class="mb-0">{{ address.address1 }}, {{ address.district }}, {{ address.city_province }}</p>
+                                                    <span class="badge bg-primary">Default</span>
+                                                </div>
+                                                
+                                                {% else %}
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <!-- Address details -->
+                                                    <p class="mb-0">
+                                                        {{ address.address1 }}, {{ address.district }}, {{ address.city_province }}
+                                                    </p>
                                             
-                                            <div id="edit-form-{{ address.id }}" class="edit-form" style="display: none;">
-                                                <form method="post" action="{% url 'edit_shipping_address' address.id %}">
-                                                    {% csrf_token %}
-                                                    {% with edit_form=edit_forms|get_item:address.id %}
-                                                        <div class="form-group">
-                                                            {{ edit_form.full_name.label_tag }}
-                                                            {{ edit_form.full_name }}
-                                                        </div>
-                                                        <div class="form-group">
-                                                            {{ edit_form.address1.label_tag }}
-                                                            {{ edit_form.address1 }}
-                                                        </div>
-                                                        <div class="form-group">
-                                                            {{ edit_form.address2.label_tag }}
-                                                            {{ edit_form.address2 }}
-                                                        </div>
-                                                        <div class="form-group">
-                                                            {{ edit_form.city_province.label_tag }}
-                                                            {{ edit_form.city_province }}
-                                                        </div>
-                                                        <div class="form-group">
-                                                            {{ edit_form.district.label_tag }}
-                                                            {{ edit_form.district }}
-                                                        </div>
-                                                    {% endwith %}
-                                                    <button type="submit" class="btn btn-success mt-2">Save</button>
-                                                    <button type="button" class="btn btn-link" onclick="toggleEditForm({{ address.id }})">Cancel</button>
-                                                </form>
-                                            </div>
+                                                    <!-- Action buttons -->
+                                                    <div class="action-buttons">
+                                                        <form action="{% url 'set_default_address' %}" method="POST" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="address_id" value="{{ address.id }}">
+                                                            <button type="submit" class="btn btn-link text-primary">Set as Default</button>
+                                                        </form>
+                                                        <button class="btn btn-link" type="button" onclick="toggleEditForm({{ address.id }})">Edit</button>
+                                                        <button class="btn btn-link text-danger delete-btn" type="button" onclick="deleteAddress({{ address.id }})">
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            
+                                                <!-- Edit form -->
+                                                <div id="edit-form-{{ address.id }}" class="edit-form" style="display: none;">
+                                                    <form method="post" action="{% url 'edit_shipping_address' address.id %}">
+                                                        {% csrf_token %}
+                                                        {% with edit_form=edit_forms|get_item:address.id %}
+                                                            <div class="form-group">
+                                                                {{ edit_form.full_name.label_tag }}
+                                                                {{ edit_form.full_name }}
+                                                            </div>
+                                                            <div class="form-group">
+                                                                {{ edit_form.address1.label_tag }}
+                                                                {{ edit_form.address1 }}
+                                                            </div>
+                                                            <div class="form-group">
+                                                                {{ edit_form.address2.label_tag }}
+                                                                {{ edit_form.address2 }}
+                                                            </div>
+                                                            <div class="form-group">
+                                                                {{ edit_form.city_province.label_tag }}
+                                                                {{ edit_form.city_province }}
+                                                            </div>
+                                                            <div class="form-group">
+                                                                {{ edit_form.district.label_tag }}
+                                                                {{ edit_form.district }}
+                                                            </div>
+                                                        {% endwith %}
+                                                        <button type="submit" class="btn btn-success mt-2">Save</button>
+                                                        <button type="button" class="btn btn-link" onclick="toggleEditForm({{ address.id }})">Cancel</button>
+                                                    </form>
+                                                </div>
+                                            
+                                                {% endif %}
+                                            </p>
+
                                         </div>
                                     {% empty %}
                                         <p>No shipping addresses found.</p>
                                     {% endfor %}
                                 </div>
-                        
-                                <h4 class="mt-4">Add New Address</h4>
-                                <button class="btn btn-primary" type="button" onclick="toggleAddForm()">Add Address</button>
-                        
-                                <div id="add-address-form" style="display: none; margin-top: 20px;">
-                                    <form method="post" action="{% url 'add_shipping_address' %}">
-                                        {% csrf_token %}
-                                        <div class="form-group">
-                                            {{ add_form.full_name.label_tag }}
-                                            {{ add_form.full_name }}
-                                        </div>
-                                        <div class="form-group">
-                                            {{ add_form.address1.label_tag }}
-                                            {{ add_form.address1 }}
-                                        </div>
-                                        <div class="form-group">
-                                            {{ add_form.address2.label_tag }}
-                                            {{ add_form.address2 }}
-                                        </div>
-                                        <div class="form-group">
-                                            {{ add_form.city_province.label_tag }}
-                                            {{ add_form.city_province }}
-                                        </div>
-                                        <div class="form-group">
-                                            {{ add_form.district.label_tag }}
-                                            {{ add_form.district }}
-                                        </div>
-                                        <button type="submit" class="btn btn-success mt-2">Save New Address</button>
-                                        <button type="button" class="btn btn-link" onclick="toggleAddForm()">Cancel</button>
-                                    </form>
-                                </div>
+                            
+                                {% if shipping_addresses|length > 0 and shipping_addresses|yesno:"Default:" %}
+                                    <h4 class="mt-4">Add New Address</h4>
+                                    <button class="btn btn-primary" type="button" onclick="toggleAddForm()">Add Address</button>
+                            
+                                    <div id="add-address-form" style="display: none; margin-top: 20px;">
+                                        <form method="post" action="{% url 'add_shipping_address' %}">
+                                            {% csrf_token %}
+                                            <div class="form-group">
+                                                {{ add_form.full_name.label_tag }}
+                                                {{ add_form.full_name }}
+                                            </div>
+                                            <div class="form-group">
+                                                {{ add_form.address1.label_tag }}
+                                                {{ add_form.address1 }}
+                                            </div>
+                                            <div class="form-group">
+                                                {{ add_form.address2.label_tag }}
+                                                {{ add_form.address2 }}
+                                            </div>
+                                            <div class="form-group">
+                                                {{ add_form.city_province.label_tag }}
+                                                {{ add_form.city_province }}
+                                            </div>
+                                            <div class="form-group">
+                                                {{ add_form.district.label_tag }}
+                                                {{ add_form.district }}
+                                            </div>
+                                            <button type="submit" class="btn btn-success mt-2">Save New Address</button>
+                                            <button type="button" class="btn btn-link" onclick="toggleAddForm()">Cancel</button>
+                                        </form>
+                                    </div>
+                                {% else %}
+                                    <p class="mt-4 text-danger">You can only add a new address if a default address exists.</p>
+                                {% endif %}
                             </div>
-                        </div>
-                        
+                        </div>                        
+                       
                         
                         <div class="tab-pane fade" id="account-connections">
                             <div class="card-body">
@@ -361,10 +469,13 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript"></script>
+
 </body>
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{% static 'js/profile/tag_hash.js' %}"></script>
 <script src="{% static 'js/profile/update_info.js' %}"></script>
 <script src="{% static 'js/profile/shipping_address_actions.js' %}"></script>

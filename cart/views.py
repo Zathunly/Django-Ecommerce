@@ -3,18 +3,24 @@ from .cart import Cart
 from store.models import Product
 from django.http import JsonResponse
 import json
-from store.models import Stock
 from django.contrib import messages
-
+    
 def cart_summary(request):
     cart = Cart(request)
     cart_total_price = cart.total_price()
-    cart_products = cart.get_session_data()
+    cart_products = cart.get_session_data()  # Example structure: {'1-L-Green': {...}}
+    # Fetch all product IDs from the cart
+    product_ids = [value['id'] for key, value in cart_products.items()]
+
+    # Fetch Product instances for these IDs
+    products = Product.objects.filter(id__in=product_ids)
 
     return render(request, 'cart_summary.html', {
         "cart_total_price": cart_total_price,
-        "cart_products": cart_products
+        "cart_products": cart_products,
+        "products": products,  # Pass Product model instances
     })
+
 
 def cart_add(request):
     if request.method != 'POST' or request.POST.get('action') != 'post':

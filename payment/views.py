@@ -6,7 +6,6 @@ from store.models import Product, Stock, Size, Color
 from django.contrib import messages
 from django.db import transaction
 
-# Create your views here.
 def payment_success(request):
     return render(request, 'payment_success.html', {})
 
@@ -67,6 +66,12 @@ def checkout(request):
 
         if request.user.is_authenticated:
             shipping_addresses = ShippingAddress.objects.filter(user=request.user)
+            default_address = shipping_addresses.filter(is_default=True).first()
+
+            if not default_address:
+                messages.warning(request, "Please update your default address before proceeding to checkout.")
+                return redirect('cart_summary') 
+
             profile, created = Profile.objects.get_or_create(user=request.user)
             return render(request, 'checkout.html', {
                 'user': request.user,
@@ -102,7 +107,6 @@ def place_order(request):
             payment_method = get_object_or_404(PaymentMethod, id=payment_method_id)
 
             formatted_shipping_address = (
-                f"{shipping_address.full_name}\n"
                 f"{shipping_address.address1}\n"
                 f"{shipping_address.address2 or ''}\n"
                 f"{shipping_address.district}, {shipping_address.city_province}"

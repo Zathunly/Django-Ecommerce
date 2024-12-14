@@ -1,8 +1,7 @@
-# from admin_interface.models import Theme
+from .breadcrumbs import get_breadcrumbs
 
-# def customize_theme_processor(request):
-#     try:
-#         customize_theme = Theme.objects.get(name="Customize")
-#     except Theme.DoesNotExist:
-#         customize_theme = None
-#     return {'customize_theme': customize_theme}
+def breadcrumbs_context(request):
+    """
+    Add breadcrumbs to the template context dynamically.
+    """
+    return {'breadcrumbs': get_breadcrumbs(request)}

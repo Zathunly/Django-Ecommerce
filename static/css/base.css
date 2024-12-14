@@ -179,29 +179,6 @@ form button:hover {
     background-color: #0056b3;
 }
 
-.messages {
-    list-style: none;
-    padding: 0;
-}
-
-.messages li {
-    position: relative;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.messages .success {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.messages .error {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
 .close-button {
     position: absolute;
     top: 5px;
@@ -225,4 +202,59 @@ form button:hover {
     position: fixed;
     top: 50%;
     left: 50%;
+}
+
+.breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    list-style: none;
+    margin-left: 10%;
+    background-color: #fff; 
+    border-radius: 0.25rem;
+    font-size: 0.875rem; 
+}
+
+/* Breadcrumb items */
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    color: #000000 !important;
+    text-decoration: none;
+    margin-right: 0.5rem;
+}
+
+/* Breadcrumb links */
+.breadcrumb-item a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Separator between breadcrumb items */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: '>'; /* Arrow separator */
+    display: inline-block;
+    margin-right: 0.5rem;
+    color: #6c757d; /* Gray for separator */
+}
+
+/* Current breadcrumb item (active) */
+.breadcrumb-item.active {
+    color: #6c757d; /* Slightly muted gray for active item */
+    font-weight: bold;
+    text-decoration: none;
+    pointer-events: none; /* Make sure it's not clickable */
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .breadcrumb {
+        font-size: 0.75rem; /* Smaller font on small screens */
+        padding: 0.5rem 0.75rem;
+    }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,21 +9,32 @@
     <link rel="shortcut icon" href="#">
     <title>{% block title %}My Website{% endblock %}</title>
     {% load static %}
+
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/messages.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <header>
+        {% include 'warning-modal.html' %} 
+
+        {% if messages %}
+            {% load static %}
+            <ul class="messages" style="animation: fadeOut 4s;">
+                {% for message in messages %}
+                    <li class="{% if message.tags %}{{ message.tags }}{% endif %}">
+                        {{ message }}
+                        <button class="close-button" onclick="this.parentElement.style.display='none';">×</button>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         <div id="spinner-box" class="spinner-border" role="status"></div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{% url 'home' %}">
                     <div class="logo-container">
-                    {% if customize_theme %}
-                        <img src="/media/{{ customize_theme.logo }}" alt="Customize Logo">
-                    {% else %}
-                        <p>Logo not available</p>
-                    {% endif %}
+                    <img src="/media/logo/MTPC_Logo.png" alt="Customize Logo">
                     </div>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +61,7 @@
                             <button class="btn nav-btn profile-btn" type="button" onclick="location.href='{% url 'profile' %}'">
                                 <i class="bi bi-person"></i> Profile
                             </button>
-                            <button class="btn nav-btn login-logout-btn" type="button" onclick="location.href='{% url 'logout' %}'">
+                            <button class="btn nav-btn login-logout-btn" type="button" onclick="showLogoutConfirmationModal('{% url 'logout' %}')">
                                 <i class="bi bi-box-arrow-right"></i> Logout
                             </button>
                         {% else %}
@@ -62,6 +73,24 @@
                 </div>
             </div>
         </nav>
+
+        {% if breadcrumbs|length > 1 %}
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                {% for crumb in breadcrumbs %}
+                    {% if not forloop.last %}
+                        <li class="breadcrumb-item">
+                            <a href="{{ crumb.url }}">{{ crumb.name }}</a>
+                        </li>
+                    {% else %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ crumb.name }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+        {% endif %}
+        
+        
     </header>
     <main>
         {% block content %}
@@ -72,5 +101,7 @@
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="{% static 'js/base.js' %}"></script>
+    <script src="{% static 'js/messages.js' %}"></script> 
+
 </body>
 </html>

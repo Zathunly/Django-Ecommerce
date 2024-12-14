@@ -1,6 +1,8 @@
 from django.core.paginator import Paginator
 from .models import Product, SubCategory
 
+from django.db.models import Q
+
 def filter_products(selected_category=None, selected_subcategory=None, price_range=None):
     products = Product.objects.all()
     
@@ -16,17 +18,32 @@ def filter_products(selected_category=None, selected_subcategory=None, price_ran
     else:
         subcategories = SubCategory.objects.all()
 
-    # Filter by Price Range
+    # Filter by Price Range (considering price and sale_price)
     if price_range == "0-100000":
-        products = products.filter(price__gte=0, price__lte=100000)
+        products = products.filter(
+            Q(price__gte=0, price__lte=100000) | 
+            Q(sale_price__gte=0, sale_price__lte=100000)
+        )
     elif price_range == "100000-500000":
-        products = products.filter(price__gte=100000, price__lte=500000)
+        products = products.filter(
+            Q(price__gte=100000, price__lte=500000) | 
+            Q(sale_price__gte=100000, sale_price__lte=500000)
+        )
     elif price_range == "500000-1000000":
-        products = products.filter(price__gte=500000, price__lte=1000000)
+        products = products.filter(
+            Q(price__gte=500000, price__lte=1000000) | 
+            Q(sale_price__gte=500000, sale_price__lte=1000000)
+        )
     elif price_range == "1000000-2000000":
-        products = products.filter(price__gte=1000000, price__lte=2000000)
+        products = products.filter(
+            Q(price__gte=1000000, price__lte=2000000) | 
+            Q(sale_price__gte=1000000, sale_price__lte=2000000)
+        )
     elif price_range == "2000000+":
-        products = products.filter(price__gte=2000000)
+        products = products.filter(
+            Q(price__gte=2000000) | 
+            Q(sale_price__gte=2000000)
+        )
 
     return products, subcategories
 

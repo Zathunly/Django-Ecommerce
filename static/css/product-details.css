@@ -1,58 +1,122 @@
+/* Container Styling */
+.container {
+    max-width: 80%;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    color: #333;
+    padding: 20px;
+}
+
+/* Product Detail Layout */
 .product-detail-container {
-    max-width: 1200px;
-    margin: 40px auto;
+    margin: 20px auto;
     display: flex;
     flex-wrap: wrap;
-    background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 40px;
+    gap: 20px;
 }
 
 .product-image-wrapper {
-    flex: 1;
-    padding: 20px;
-    max-width: 100%; 
+    flex: 5;
     text-align: center;
+    border-right: 2px solid #ccc;
+    padding: 20px;
 }
 
 .product-image {
-    width: 70%;
+    width: 100%;
     height: auto;
     border-radius: 5px;
 }
 
-.product-info h1 {
+/* Product Info Section */
+.product-info {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+    text-align: left;
+}
+
+/* Product Name Styling */
+.product-name {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
     font-size: 28px;
     font-weight: bold;
+    border-bottom: 1px solid #000;
+    padding-bottom: 5px;
     margin-bottom: 10px;
-    text-align: center;
 }
 
-.product-price {
-    font-size: 22px;
+/* Price and Badge Styling */
+.price-badge-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-price .regular-price {
+    font-size: 1.7rem;
+    color: #333; 
+    font-weight: normal;
+}
+
+.product-price .old-price {
+    font-size: 1.3rem;
+    color: #999; 
+    text-decoration: line-through;
+    margin-right: 0.5rem;
+    font-weight: normal;
+}
+
+.product-price .sale-price {
+    font-size: 1.7rem;
+    color: #d9534f; 
     font-weight: bold;
-    color: #555;
-    text-align: center;
-    margin-bottom: 20px;
 }
 
+/* Quantity Wrapper */
 .quantity-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
+    gap: 10px;
 }
 
-.quantity-input {
+.quantity-wrapper input.quantity-input {
+    width: 60px;
     text-align: center;
-    width: 50px;
+    font-size: 16px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.quantity-wrapper button {
     font-size: 18px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    color: #000;
 }
 
+/* Size Options */
 .size-options-container {
-    text-align: center;
-    margin-bottom: 20px;
+    text-align: left;
+}
+
+.size-options-container h5 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .size-option {
@@ -65,30 +129,80 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    color: #000;
+    transition: all 0.3s ease;
 }
 
 .size-option.active {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
+    background-color: #000000 !important ;
+    border-color: #000000 !important;
+    box-shadow: none !important;
 }
 
+.size-option:hover {
+    background-color: #000000;
+    border: 2px solid #000000;
+    color: white;
+}
+
+/* Color Options */
+.color-options-container {
+    display: flex;
+    flex-direction: column; 
+    margin-bottom: 20px;
+}
+
+.option-label {
+    margin-bottom: 5px; /* Reduce space between the label and color blocks */
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.color-options {
+    margin: 5px;
+    display: flex;
+    gap: 10px; /* Space between color blocks */
+    flex-wrap: wrap; /* Allows color blocks to wrap to the next line if needed */
+}
+
+.color-option {
+    width: 45px;
+    height: 45px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.color-option:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+.color-option.active {
+    border: 2px solid #000000; 
+    box-shadow: 0 0 0 .2rem rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Button Styling */
 .secondary-btn {
     display: inline-block;
     padding: 12px 20px;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
-    font-size: 18px;    
+    font-size: 18px;
     font-weight: bold;
-    margin: 10px 5px;
     text-align: center;
-    width: 150px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .add-cart-btn {
     background-color: #000;
     color: #fff;
+    margin-right: 10px
 }
 
 .add-cart-btn:hover {
@@ -97,7 +211,7 @@
 
 .btn-fav {
     background-color: #ffc107;
-    color: white;
+    color: #fff;
 }
 
 .btn-fav:hover {

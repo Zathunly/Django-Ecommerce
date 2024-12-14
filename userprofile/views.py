@@ -6,12 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from payment.models import ShippingAddress
 from .models import Profile
+from payment.models import Order
 from .forms import ProfilePartialForm, ShippingAddressForm
 from django.urls import reverse
 
 @login_required
 def initialize_profile(request):
-    profile = Profile.objects.get(user=request.user)
+    profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
         form = ProfilePartialForm(request.POST, instance=profile)
@@ -24,16 +25,25 @@ def initialize_profile(request):
 
     return render(request, 'initialize-profile.html', {'form': form})
 
+
 @login_required
 def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
-    shipping_addresses = ShippingAddress.objects.filter(user=request.user)
+    shipping_addresses = ShippingAddress.objects.filter(user=request.user).order_by('-is_default', 'id')  
+ 
+    # Filter orders by status
+    pending_orders = Order.objects.filter(user=request.user, status='Pending')
+    completed_orders = Order.objects.filter(user=request.user, status='Complete')
+    cancelled_orders = Order.objects.filter(user=request.user, status='Cancel')
 
     return render(request, 'profile.html', {
         'profile': profile,
         'shipping_addresses': shipping_addresses,
         'add_form': ShippingAddressForm(),
         'edit_forms': {address.id: ShippingAddressForm(instance=address) for address in shipping_addresses},
+        'pending_orders': pending_orders,
+        'completed_orders': completed_orders,
+        'cancelled_orders': cancelled_orders,
     })
 
 @login_required
@@ -48,6 +58,19 @@ def add_shipping_address(request):
             return HttpResponseRedirect(reverse('profile') + '#shipping-address-manage')
     else:
         messages.error(request, "Failed to add shipping address.")
+
+    return HttpResponseRedirect(reverse('profile') + '#shipping-address-manage')
+
+@login_required
+def set_default_address(request):
+    address = get_object_or_404(ShippingAddress, id=request.POST.get('address_id'), user=request.user)
+    if address:
+        ShippingAddress.objects.filter(user=request.user).update(is_default=False)
+        address.is_default = True
+        address.save()
+        messages.success(request, "Default shipping address updated successfully.")
+    else:
+        messages.error(request, "Failed to update default shipping address.")
 
     return HttpResponseRedirect(reverse('profile') + '#shipping-address-manage')
 

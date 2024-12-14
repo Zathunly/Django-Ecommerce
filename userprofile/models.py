@@ -10,7 +10,7 @@ class Profile(models.Model):
     date_modified = models.DateTimeField(User, auto_now=True)
     phone = models.CharField(max_length=20, blank=True)
     address1 = models.CharField(max_length=255, blank=True)
-    address2 = models.CharField(max_length=255, blank=True)
+    address2 = models.CharField(max_length=255, blank=True, null=True)
     city_province = models.CharField(max_length=100, blank=True)
     district = models.CharField(max_length=100, blank=True)
 
@@ -25,15 +25,22 @@ def create_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Profile)
 def create_or_update_shipping_address(sender, instance, **kwargs):
+    if not instance.address1 or not instance.city_province or not instance.district:
+        return
+
     full_name = f"{instance.user.first_name} {instance.user.last_name}".strip()
+
     shipping_address, created = ShippingAddress.objects.get_or_create(user=instance.user)
+
     shipping_address.full_name = full_name
     shipping_address.address1 = instance.address1
     shipping_address.address2 = instance.address2
     shipping_address.city_province = instance.city_province
     shipping_address.district = instance.district
+    shipping_address.is_default = True
+
     shipping_address.save()
 
-post_save.connect(create_profile, sender=User)
+    ShippingAddress.objects.filter(user=instance.user).exclude(id=shipping_address.id).update(is_default=False)
 
                    

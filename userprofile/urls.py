@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.profile_view, name='profile'), 
     path('initialize-profile/', views.initialize_profile, name='initialize_profile'),
     path('profile/add-address/', views.add_shipping_address, name='add_shipping_address'),
+    path('profile/set-default-address/', views.set_default_address, name='set_default_address'),
     path('profile/edit-address/<int:address_id>/', views.edit_shipping_address, name='edit_shipping_address'),
     path('profile/delete-address/<int:address_id>/', views.delete_address, name='delete_address'),
     path('delete-address/<int:address_id>/', views.delete_address, name='delete_address'),

@@ -8,19 +8,6 @@
     <link rel="stylesheet" href="{% static 'css/products.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/css/ion.rangeSlider.min.css" rel="stylesheet">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-
-    <!-- Message Form -->
-    <ul class="list-unstyled mb-4">
-        {% for message in messages %}
-            <li class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                {{ message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </li>
-        {% endfor %}
-    </ul>
-
     <!-- Sidebar and Main Content Container -->
     <div class="container mt-5">
         <div class="row">
@@ -90,16 +77,20 @@
             <!-- Main Content Area -->
             <div class="col-md-9">
                 <!-- Search Query -->
-                <form method="GET" action="{% url 'search_products' %}" class="form-inline mb-4">
-                    <input type="text" name="q" placeholder="Search for products..." class="form-control mr-2">
-                    <button type="submit" class="btn btn-primary">Search</button>
+                <form id="search_bar" method="get" action="{% url 'products-view' %}">
+                    <input type="hidden" name="category" value="{{ selected_category }}">
+                    <input type="hidden" name="subcategory" value="{{ selected_subcategory }}">
+                    <input type="hidden" name="price_range" value="{{ price_range }}">
+                    <input type="text" name="q" value="{{ query }}" placeholder="Search products">
+                    <button type="submit">Search</button>
                 </form>
+                
 
                 <!-- Products Grid -->
                 <section>
                     <div class="row">
                         {% for product in products %}
-                        <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-6">
                             <h3><a href="{% url 'product-details-view' product.id %}" class="text-decoration-none text-dark"></h3>
                             <div class="card h-100 product-card">
                                 <div class="product-image-wrapper position-relative">
@@ -114,11 +105,12 @@
                                     <h5 class="product-name">{{ product.name }}</h5>
                                     <p class="product-price">
                                         {% if product.is_sale %}
-                                            {{ product.sale_price|format_price }} VND
+                                            <span class="old-price">{{ product.price|format_price }}đ</span>
+                                            <span class="sale-price">{{ product.sale_price|format_price }}đ</span>
                                         {% else %}
-                                            {{ product.price|format_price }} VND
+                                            <span class="regular-price">{{ product.price|format_price }}đ</span>
                                         {% endif %}
-                                    </p>
+                                    </p>                                    
                                     <input type="hidden" id="quantity-input" value="1">
                                     {% comment %} <button type="button" value="{{ product.id }}" class="btn btn-primary add-cart-btn" id="add-to-cart" data-url="{% url 'cart_add' %}">
                                         Add to Cart
@@ -166,5 +158,4 @@
 <script src="https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/js/ion.rangeSlider.min.js"></script>
 <script src="{% static 'js/products/products.js' %}"></script>
 <script src="{% static 'js/products/add_to_cart.js' %}"></script>
-<script src="{% static 'js/messages.js' %}"></script>
 {% endblock %}
